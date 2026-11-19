@@ -1,0 +1,429 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  background: #e2e8f0;
+  user-select: none;
+  touch-action: none;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.hud-root {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.hud-top-bar {
+  position: absolute;
+  top: max(12px, env(safe-area-inset-top));
+  left: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hud-top-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hud-pill {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(10px);
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+.dot-live {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.22);
+}
+
+.hud-prize-pill strong {
+  color: #dc2626;
+  font-size: 16px;
+}
+
+.hud-play-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: auto;
+}
+
+.hud-btn {
+  appearance: none;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 13px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.1);
+  transition: transform 0.12s ease, background 0.15s ease;
+}
+
+.hud-btn:hover {
+  background: #ffffff;
+}
+
+.hud-btn:active {
+  transform: scale(0.95);
+}
+
+.hud-btn-primary {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+}
+
+.hud-btn-primary:hover {
+  background: #1e293b;
+}
+
+.hud-phase-pill {
+  position: absolute;
+  top: max(62px, calc(env(safe-area-inset-top) + 52px));
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.76);
+  color: #f8fafc;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  backdrop-filter: blur(8px);
+}
+
+.hud-near-prompt {
+  pointer-events: auto;
+  position: absolute;
+  bottom: 112px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 12px 22px;
+  border-radius: 16px;
+  border: 2px solid #e63946;
+  background: rgba(255, 255, 255, 0.95);
+  color: #0f172a;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.22);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.hud-near-prompt:hover {
+  transform: translateX(-50%) scale(1.03);
+}
+
+.near-title {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.near-sub {
+  font-size: 12px;
+  font-weight: 600;
+  color: #dc2626;
+}
+
+.hud-quick-bar {
+  pointer-events: auto;
+  position: absolute;
+  bottom: max(38px, calc(env(safe-area-inset-bottom) + 28px));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  max-width: calc(100vw - 24px);
+  overflow-x: auto;
+  padding: 6px 8px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.14);
+}
+
+.hud-quick-chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.12s ease, transform 0.12s ease;
+}
+
+.hud-quick-chip:hover {
+  background: #f1f5f9;
+  transform: translateY(-1px);
+}
+
+.chip-num {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: #e63946;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.hud-controls {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: max(46px, calc(env(safe-area-inset-bottom) + 34px));
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+/* 桌機走動時隱藏虛擬搖桿，觸控裝置維持顯示 */
+@media (hover: hover) and (pointer: fine) {
+  .hud-controls.walk-only {
+    display: none;
+  }
+}
+
+.joystick-wrap,
+.drop-btn-wrap {
+  pointer-events: auto;
+}
+
+.joystick-base {
+  position: relative;
+  width: 122px;
+  height: 122px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(226, 232, 240, 0.8));
+  border: 2px solid rgba(15, 23, 42, 0.18);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18), inset 0 2px 6px rgba(255, 255, 255, 0.8);
+  display: grid;
+  place-items: center;
+  touch-action: none;
+}
+
+.joy-arrow {
+  position: absolute;
+  font-size: 10px;
+  color: rgba(15, 23, 42, 0.35);
+  pointer-events: none;
+}
+.joy-arrow.up { top: 8px; }
+.joy-arrow.down { bottom: 8px; }
+.joy-arrow.left { left: 10px; }
+.joy-arrow.right { right: 10px; }
+
+.joystick-knob {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #f87171, #dc2626 62%, #991b1b);
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 6px 14px rgba(153, 27, 27, 0.4);
+  pointer-events: none;
+}
+
+.red-drop-btn {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 4px solid #ffffff;
+  background: radial-gradient(circle at 35% 28%, #ff6b6b, #dc2626 65%, #991b1b);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(220, 38, 38, 0.42), inset 0 3px 6px rgba(255, 255, 255, 0.35);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  touch-action: none;
+}
+
+.red-drop-btn.pressed,
+.red-drop-btn:active {
+  transform: scale(0.92);
+  box-shadow: 0 3px 10px rgba(220, 38, 38, 0.45);
+}
+
+.red-drop-btn.midair-ready {
+  background: radial-gradient(circle at 35% 28%, #fbbf24, #ea580c 68%, #9a3412);
+  box-shadow: 0 0 0 6px rgba(251, 191, 36, 0.35), 0 8px 22px rgba(234, 88, 12, 0.5);
+}
+
+.drop-main {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.drop-sub {
+  font-size: 10px;
+  font-weight: 700;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+.hud-hint-bar {
+  position: absolute;
+  bottom: max(8px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.62);
+  color: #f8fafc;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  max-width: 94vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hud-toast-container {
+  position: absolute;
+  top: 108px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.hud-toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 2px solid #16a34a;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.22);
+  animation: toast-pop 0.26s ease-out;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.hud-toast.fade-out {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.toast-icon {
+  font-size: 26px;
+}
+
+.toast-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: #16a34a;
+}
+
+.toast-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+@keyframes toast-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #f1f5f9;
+  color: #0f172a;
+  z-index: 100;
+  font-size: 16px;
+  font-weight: 700;
+  transition: opacity 0.3s ease;
+}
+
+@media (max-width: 640px) {
+  .hud-pill {
+    font-size: 12px;
+    padding: 6px 11px;
+  }
+  .hud-btn {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+  .joystick-base {
+    width: 108px;
+    height: 108px;
+  }
+  .red-drop-btn {
+    width: 84px;
+    height: 84px;
+  }
+  .drop-main {
+    font-size: 19px;
+  }
+}
